@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Effect Tracker</title>
+  <title>DND5E Effect Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     table {
       border-collapse: collapse;
@@ -19,6 +20,9 @@
 
     #effect-name, #effect-duration {
       margin-bottom: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px;
     }
 
     #effect-list {
@@ -27,6 +31,20 @@
 
     #next-round-button {
       margin-bottom: 20px;
+      display: block;
+      width: 100%;
+      padding: 10px;
+    }
+
+    @media only screen and (min-width: 768px) {
+      #effect-name, #effect-duration {
+        width: auto;
+      }
+
+      #next-round-button {
+        width: auto;
+        display: inline-block;
+      }
     }
   </style>
 </head>
