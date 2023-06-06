@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Effect Tracker</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    #effect-name, #effect-duration {
+      margin-bottom: 10px;
+    }
+
+    #effect-list {
+      margin-bottom: 20px;
+    }
+
+    #next-round-button {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>DND5E Effect Tracker</h1>
+  <form id="effect-form">
+    <label for="effect-name">Effect Name:</label>
+    <input type="text" id="effect-name" required>
+    <label for="effect-duration">Duration (in rounds):</label>
+    <input type="number" id="effect-duration" required>
+    <button type="submit">Add Effect</button>
+  </form>
+
+  <table id="effect-list">
+    <tr>
+      <th>Effect Name</th>
+      <th>Duration</th>
+    </tr>
+  </table>
+
+  <button id="next-round-button">Next Round of Combat</button>
+
+  <script>
+    document.getElementById('effect-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      var effectName = document.getElementById('effect-name').value;
+      var effectDuration = document.getElementById('effect-duration').value;
+
+      var effectList = document.getElementById('effect-list');
+      var newRow = effectList.insertRow(-1);
+      var nameCell = newRow.insertCell(0);
+      var durationCell = newRow.insertCell(1);
+
+      nameCell.textContent = effectName;
+      durationCell.textContent = effectDuration;
+
+      document.getElementById('effect-name').value = '';
+      document.getElementById('effect-duration').value = '';
+    });
+
+    document.getElementById('next-round-button').addEventListener('click', function() {
+      var effectList = document.getElementById('effect-list');
+      var rows = effectList.rows;
+
+      for (var i = 1; i < rows.length; i++) {
+        var durationCell = rows[i].cells[1];
+        var duration = parseInt(durationCell.textContent);
+
+        if (duration > 1) {
+          durationCell.textContent = duration - 1;
+        } else {
+          effectList.deleteRow(i);
+          i--;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
