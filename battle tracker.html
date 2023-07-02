@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DnD 5e Initiative Tracker</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .buttons button {
+            margin: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1>DnD 5e Initiative Tracker</h1>
+    <form id="initiativeForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" required>
+        
+        <label for="initiative">Initiative:</label>
+        <input type="number" id="initiative" required>
+        
+        <label for="hp">HP:</label>
+        <input type="number" id="hp" value="0" required>
+        
+        <label for="tempHp">Temporary HP:</label>
+        <input type="number" id="tempHp" value="0" required>
+        
+        <button type="button" onclick="addCharacter()">Add Character</button>
+    </form>
+    
+    <table id="initiativeTable">
+        <tr>
+            <th>Name</th>
+            <th>Initiative</th>
+            <th>HP</th>
+            <th>Temporary HP</th>
+            <th></th>
+        </tr>
+    </table>
+    
+    <script>
+        function addCharacter() {
+            var name = document.getElementById("name").value;
+            var initiative = document.getElementById("initiative").value;
+            var hp = document.getElementById("hp").value;
+            var tempHp = document.getElementById("tempHp").value;
+            
+            var table = document.getElementById("initiativeTable");
+            var row = table.insertRow();
+            row.setAttribute("data-initiative", initiative); // Store initiative as a custom attribute
+            
+            var nameCell = row.insertCell();
+            nameCell.innerHTML = name;
+            
+            var initiativeCell = row.insertCell();
+            initiativeCell.innerHTML = initiative;
+            
+            var hpCell = row.insertCell();
+            hpCell.innerHTML = hp;
+            
+            var tempHpCell = row.insertCell();
+            tempHpCell.innerHTML = tempHp;
+            
+            var buttonsCell = row.insertCell();
+            buttonsCell.classList.add("buttons");
+            
+            var addHpButton = document.createElement("button");
+            addHpButton.innerHTML = "Add HP";
+            addHpButton.addEventListener("click", function() {
+                var currentHp = parseInt(hpCell.innerHTML);
+                var newHp = prompt("Enter the amount of HP to add:", 0);
+                var totalHp = currentHp + parseInt(newHp);
+                hpCell.innerHTML = totalHp;
+            });
+            buttonsCell.appendChild(addHpButton);
+            
+            var addTempHpButton = document.createElement("button");
+            addTempHpButton.innerHTML = "Add Temp HP";
+            addTempHpButton.addEventListener("click", function() {
+                var currentTempHp = parseInt(tempHpCell.innerHTML);
+                var newTempHp = prompt("Enter the amount of Temporary HP to add:", 0);
+                var totalTempHp = currentTempHp + parseInt(newTempHp);
+                tempHpCell.innerHTML = totalTempHp;
+            });
+            buttonsCell.appendChild(addTempHpButton);
+            
+            var removeHpButton = document.createElement("button");
+            removeHpButton.innerHTML = "Remove HP";
+            removeHpButton.addEventListener("click", function() {
+                var currentHp = parseInt(hpCell.innerHTML);
+                var hpToRemove = prompt("Enter the amount of HP to remove:", 0);
+                var totalHp = currentHp - parseInt(hpToRemove);
+                
+                if (totalHp < 0) {
+                    totalHp = 0;
+                }
+                
+                hpCell.innerHTML = totalHp;
+            });
+            buttonsCell.appendChild(removeHpButton);
+            
+            // Sort the table by initiative
+            var rows = Array.from(table.getElementsByTagName("tr"));
+            rows.shift(); // Remove the header row
+            
+            rows.sort(function(a, b) {
+                var initiativeA = parseInt(a.getAttribute("data-initiative"));
+                var initiativeB = parseInt(b.getAttribute("data-initiative"));
+                return initiativeB - initiativeA;
+            });
+            
+            for (var i = 0; i < rows.length; i++) {
+                table.appendChild(rows[i]);
+            }
+        }
+    </script>
+</body>
+</html>
