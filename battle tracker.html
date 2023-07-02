@@ -35,19 +35,20 @@
       display: inline-block;
       margin-left: 5px;
       padding: 3px 5px;
-      background-color: #4CAF50;
       color: white;
       cursor: pointer;
     }
 
-    .add-hp-button,
+    .add-hp-button {
+      background-color: #4CAF50;
+    }
+
     .add-temp-hp-button {
-      display: inline-block;
-      margin-left: 5px;
-      padding: 3px 5px;
-      background-color: #2196F3;
-      color: white;
-      cursor: pointer;
+      background-color: gold;
+    }
+
+    .remove-button {
+      background-color: red;
     }
 
     .hp-input,
@@ -92,9 +93,7 @@
         <th>Initiative</th>
         <th>HP</th>
         <th>Temp HP</th>
-        <th></th>
-        <th></th>
-        <th></th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody id="tracker-body"></tbody>
@@ -151,51 +150,77 @@
       tempHpCol.textContent = tempHp;
       row.appendChild(tempHpCol);
 
-      const addHpButton = createButton('add-hp-button', '+');
+      const actionsCol = document.createElement('td');
+
+      const addHpButton = createButton('add-hp-button', '+ Add HP');
       addHpButton.addEventListener('click', () => addHp(row, hpCol));
-      row.appendChild(addHpButton);
+      actionsCol.appendChild(addHpButton);
 
-      const addTempHpButton = createButton('add-temp-hp-button', '+');
+      const addTempHpButton = createButton('add-temp-hp-button', '+ Add Temp HP');
       addTempHpButton.addEventListener('click', () => addTempHp(row, tempHpCol));
-      row.appendChild(addTempHpButton);
+      actionsCol.appendChild(addTempHpButton);
 
-      const removeHpButton = createButton('remove-button', '-');
+      const removeHpButton = createButton('remove-button', '- Remove HP');
       removeHpButton.addEventListener('click', () => removeHp(row, hpCol, tempHpCol));
-      row.appendChild(removeHpButton);
+      actionsCol.appendChild(removeHpButton);
+
+      row.appendChild(actionsCol);
 
       return row;
     }
 
     function createButton(className, text) {
-      const button = document.createElement('span');
+      const button = document.createElement('button');
       button.classList.add(className);
       button.textContent = text;
       return button;
     }
 
     function addHp(row, hpCol) {
-      const input = createNumericInput('hp-input');
-      input.addEventListener('input', () => updateHp(row, hpCol, input.value));
-      row.insertBefore(input, hpCol);
+      const inputValue = prompt('Enter HP value:');
+      const hpValue = parseInt(inputValue);
+      if (!isNaN(hpValue)) {
+        const currentHp = parseInt(hpCol.textContent) || 0;
+        hpCol.textContent = currentHp + hpValue;
+      }
     }
 
     function addTempHp(row, tempHpCol) {
-      const input = createNumericInput('temp-hp-input');
-      input.addEventListener('input', () => updateTempHp(row, tempHpCol, input.value));
-      row.insertBefore(input, tempHpCol);
+      const inputValue = prompt('Enter Temp HP value:');
+      const tempHpValue = parseInt(inputValue);
+      if (!isNaN(tempHpValue)) {
+        const currentTempHp = parseInt(tempHpCol.textContent) || 0;
+        tempHpCol.textContent = currentTempHp + tempHpValue;
+      }
     }
 
     function removeHp(row, hpCol, tempHpCol) {
-      const tempHp = parseInt(tempHpCol.textContent);
-      if (tempHp > 0) {
-        tempHpCol.textContent = tempHp - 1;
-      } else {
-        let hp = parseInt(hpCol.textContent);
-        if (hp > 0) {
-          hpCol.textContent = hp - 1;
+      const inputValue = prompt('Enter HP value to remove:');
+      const hpValue = parseInt(inputValue);
+      if (!isNaN(hpValue)) {
+        let tempHp = parseInt(tempHpCol.textContent) || 0;
+
+        if (tempHp >= hpValue) {
+          tempHp -= hpValue;
+        } else {
+          const remainingHp = hpValue - tempHp;
+          tempHp = 0;
+
+          let hp = parseInt(hpCol.textContent) || 0;
+          if (hp >= remainingHp) {
+            hp -= remainingHp;
+          } else {
+            hp = 0;
+            tableBody.removeChild(row);
+            trackerData = trackerData.filter((data) => data.name !== row.querySelector('.name-col span').textContent);
+            updateRowNumbers();
+          }
+          hpCol.textContent = hp;
         }
 
-        if (hp - 1 <= 0) {
+        tempHpCol.textContent = tempHp;
+
+        if (parseInt(hpCol.textContent) === 0) {
           tableBody.removeChild(row);
           trackerData = trackerData.filter((data) => data.name !== row.querySelector('.name-col span').textContent);
           updateRowNumbers();
@@ -203,29 +228,12 @@
       }
     }
 
-    function updateHp(row, hpCol, value) {
-      const hp = parseInt(value) || 0;
-      hpCol.textContent = hp;
-    }
-
-    function updateTempHp(row, tempHpCol, value) {
-      const tempHp = parseInt(value) || 0;
-      tempHpCol.textContent = tempHp;
-    }
-
-    function createNumericInput(className) {
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = '0';
-      input.classList.add(className);
-      return input;
-    }
-
     function sortTableByInitiative() {
       trackerData.sort((a, b) => b.initiative - a.initiative);
       while (tableBody.firstChild) {
         tableBody.removeChild(tableBody.firstChild);
       }
+
       trackerData.forEach((data, index) => {
         const row = createRow(data.name, data.nameColor, data.initiative, data.hp, data.tempHp);
         tableBody.appendChild(row);
