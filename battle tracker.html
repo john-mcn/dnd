@@ -1,141 +1,252 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>DnD 5e Initiative Tracker</title>
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        
-        th, td {
-            text-align: left;
-            padding: 8px;
-        }
-        
-        th {
-            background-color: #f2f2f2;
-        }
-        
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        
-        .buttons {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .buttons button {
-            margin: 2px;
-        }
-    </style>
+  <title>D&amp;D 5e Initiative Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .name {
+      font-weight: bold;
+    }
+
+    .hp-button,
+    .temp-hp-button,
+    .remove-button {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 3px 5px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+
+    .add-hp-button,
+    .add-temp-hp-button {
+      display: inline-block;
+      margin-left: 5px;
+      padding: 3px 5px;
+      background-color: #2196F3;
+      color: white;
+      cursor: pointer;
+    }
+
+    .hp-input,
+    .temp-hp-input {
+      width: 30px;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .name-col {
+        display: none;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <h1>DnD 5e Initiative Tracker</h1>
-    <form id="initiativeForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" required>
-        
-        <label for="initiative">Initiative:</label>
-        <input type="number" id="initiative" required>
-        
-        <label for="hp">HP:</label>
-        <input type="number" id="hp" value="0" required>
-        
-        <label for="tempHp">Temporary HP:</label>
-        <input type="number" id="tempHp" value="0" required>
-        
-        <button type="button" onclick="addCharacter()">Add Character</button>
-    </form>
-    
-    <table id="initiativeTable">
-        <tr>
-            <th>Name</th>
-            <th>Initiative</th>
-            <th>HP</th>
-            <th>Temporary HP</th>
-            <th></th>
-        </tr>
-    </table>
-    
-    <script>
-        function addCharacter() {
-            var name = document.getElementById("name").value;
-            var initiative = document.getElementById("initiative").value;
-            var hp = document.getElementById("hp").value;
-            var tempHp = document.getElementById("tempHp").value;
-            
-            var table = document.getElementById("initiativeTable");
-            var row = table.insertRow();
-            row.setAttribute("data-initiative", initiative); // Store initiative as a custom attribute
-            
-            var nameCell = row.insertCell();
-            nameCell.innerHTML = name;
-            
-            var initiativeCell = row.insertCell();
-            initiativeCell.innerHTML = initiative;
-            
-            var hpCell = row.insertCell();
-            hpCell.innerHTML = hp;
-            
-            var tempHpCell = row.insertCell();
-            tempHpCell.innerHTML = tempHp;
-            
-            var buttonsCell = row.insertCell();
-            buttonsCell.classList.add("buttons");
-            
-            var addHpButton = document.createElement("button");
-            addHpButton.innerHTML = "Add HP";
-            addHpButton.addEventListener("click", function() {
-                var currentHp = parseInt(hpCell.innerHTML);
-                var newHp = prompt("Enter the amount of HP to add:", 0);
-                var totalHp = currentHp + parseInt(newHp);
-                hpCell.innerHTML = totalHp;
-            });
-            buttonsCell.appendChild(addHpButton);
-            
-            var addTempHpButton = document.createElement("button");
-            addTempHpButton.innerHTML = "Add Temp HP";
-            addTempHpButton.addEventListener("click", function() {
-                var currentTempHp = parseInt(tempHpCell.innerHTML);
-                var newTempHp = prompt("Enter the amount of Temporary HP to add:", 0);
-                var totalTempHp = currentTempHp + parseInt(newTempHp);
-                tempHpCell.innerHTML = totalTempHp;
-            });
-            buttonsCell.appendChild(addTempHpButton);
-            
-            var removeHpButton = document.createElement("button");
-            removeHpButton.innerHTML = "Remove HP";
-            removeHpButton.addEventListener("click", function() {
-                var currentHp = parseInt(hpCell.innerHTML);
-                var hpToRemove = prompt("Enter the amount of HP to remove:", 0);
-                var totalHp = currentHp - parseInt(hpToRemove);
-                
-                if (totalHp < 0) {
-                    totalHp = 0;
-                }
-                
-                hpCell.innerHTML = totalHp;
-            });
-            buttonsCell.appendChild(removeHpButton);
-            
-            // Sort the table by initiative
-            var rows = Array.from(table.getElementsByTagName("tr"));
-            rows.shift(); // Remove the header row
-            
-            rows.sort(function(a, b) {
-                var initiativeA = parseInt(a.getAttribute("data-initiative"));
-                var initiativeB = parseInt(b.getAttribute("data-initiative"));
-                return initiativeB - initiativeA;
-            });
-            
-            for (var i = 0; i < rows.length; i++) {
-                table.appendChild(rows[i]);
-            }
+  <h1>D&amp;D 5e Initiative Tracker</h1>
+  <form id="tracker-form">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
+
+    <label for="name-color">Name Color:</label>
+    <input type="color" id="name-color">
+
+    <label for="initiative">Initiative:</label>
+    <input type="number" id="initiative" required>
+
+    <label for="hp">HP:</label>
+    <input type="number" id="hp" required>
+
+    <label for="temp-hp">Temp HP:</label>
+    <input type="number" id="temp-hp">
+
+    <button type="submit">Add</button>
+  </form>
+
+  <table id="tracker-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th class="name-col">Name</th>
+        <th>Initiative</th>
+        <th>HP</th>
+        <th>Temp HP</th>
+        <th></th>
+        <th></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody id="tracker-body"></tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('tracker-form');
+    const tableBody = document.getElementById('tracker-body');
+
+    let trackerData = [];
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const nameColor = document.getElementById('name-color').value;
+      const initiative = parseInt(document.getElementById('initiative').value);
+      const hp = parseInt(document.getElementById('hp').value);
+      const tempHp = parseInt(document.getElementById('temp-hp').value) || 0;
+
+      if (name && !isNaN(initiative) && !isNaN(hp)) {
+        const newRow = createRow(name, nameColor, initiative, hp, tempHp);
+        tableBody.appendChild(newRow);
+        trackerData.push({ name, nameColor, initiative, hp, tempHp });
+        sortTableByInitiative();
+        clearFormInputs();
+      }
+    });
+
+    function createRow(name, nameColor, initiative, hp, tempHp) {
+      const row = document.createElement('tr');
+
+      const rowNumber = document.createElement('td');
+      rowNumber.textContent = tableBody.children.length + 1;
+      row.appendChild(rowNumber);
+
+      const nameCol = document.createElement('td');
+      nameCol.classList.add('name-col');
+      const nameSpan = document.createElement('span');
+      nameSpan.textContent = name;
+      nameSpan.style.color = nameColor;
+      nameCol.appendChild(nameSpan);
+      row.appendChild(nameCol);
+
+      const initiativeCol = document.createElement('td');
+      initiativeCol.textContent = initiative;
+      row.appendChild(initiativeCol);
+
+      const hpCol = document.createElement('td');
+      hpCol.textContent = hp;
+      row.appendChild(hpCol);
+
+      const tempHpCol = document.createElement('td');
+      tempHpCol.textContent = tempHp;
+      row.appendChild(tempHpCol);
+
+      const addHpButton = createButton('add-hp-button', '+');
+      addHpButton.addEventListener('click', () => addHp(row, hpCol));
+      row.appendChild(addHpButton);
+
+      const addTempHpButton = createButton('add-temp-hp-button', '+');
+      addTempHpButton.addEventListener('click', () => addTempHp(row, tempHpCol));
+      row.appendChild(addTempHpButton);
+
+      const removeHpButton = createButton('remove-button', '-');
+      removeHpButton.addEventListener('click', () => removeHp(row, hpCol, tempHpCol));
+      row.appendChild(removeHpButton);
+
+      return row;
+    }
+
+    function createButton(className, text) {
+      const button = document.createElement('span');
+      button.classList.add(className);
+      button.textContent = text;
+      return button;
+    }
+
+    function addHp(row, hpCol) {
+      const input = createNumericInput('hp-input');
+      input.addEventListener('input', () => updateHp(row, hpCol, input.value));
+      row.insertBefore(input, hpCol);
+    }
+
+    function addTempHp(row, tempHpCol) {
+      const input = createNumericInput('temp-hp-input');
+      input.addEventListener('input', () => updateTempHp(row, tempHpCol, input.value));
+      row.insertBefore(input, tempHpCol);
+    }
+
+    function removeHp(row, hpCol, tempHpCol) {
+      const tempHp = parseInt(tempHpCol.textContent);
+      if (tempHp > 0) {
+        tempHpCol.textContent = tempHp - 1;
+      } else {
+        let hp = parseInt(hpCol.textContent);
+        if (hp > 0) {
+          hpCol.textContent = hp - 1;
         }
-    </script>
+
+        if (hp - 1 <= 0) {
+          tableBody.removeChild(row);
+          trackerData = trackerData.filter((data) => data.name !== row.querySelector('.name-col span').textContent);
+          updateRowNumbers();
+        }
+      }
+    }
+
+    function updateHp(row, hpCol, value) {
+      const hp = parseInt(value) || 0;
+      hpCol.textContent = hp;
+    }
+
+    function updateTempHp(row, tempHpCol, value) {
+      const tempHp = parseInt(value) || 0;
+      tempHpCol.textContent = tempHp;
+    }
+
+    function createNumericInput(className) {
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.min = '0';
+      input.classList.add(className);
+      return input;
+    }
+
+    function sortTableByInitiative() {
+      trackerData.sort((a, b) => b.initiative - a.initiative);
+      while (tableBody.firstChild) {
+        tableBody.removeChild(tableBody.firstChild);
+      }
+      trackerData.forEach((data, index) => {
+        const row = createRow(data.name, data.nameColor, data.initiative, data.hp, data.tempHp);
+        tableBody.appendChild(row);
+      });
+    }
+
+    function updateRowNumbers() {
+      const rows = tableBody.querySelectorAll('tr');
+      rows.forEach((row, index) => {
+        row.querySelector('td:first-child').textContent = index + 1;
+      });
+    }
+
+    function clearFormInputs() {
+      document.getElementById('name').value = '';
+      document.getElementById('name-color').value = '#000000';
+      document.getElementById('initiative').value = '';
+      document.getElementById('hp').value = '';
+      document.getElementById('temp-hp').value = '';
+    }
+  </script>
 </body>
+
 </html>
