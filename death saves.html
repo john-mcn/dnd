@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Death Save Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        td {
+            border-bottom: 1px solid #ccc;
+        }
+
+        .success-circle, .failure-circle {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            margin-right: 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .success-circle {
+            border: 1px solid green;
+        }
+
+        .success-circle.filled {
+            background-color: green;
+        }
+
+        .failure-circle {
+            border: 1px solid red;
+        }
+
+        .failure-circle.filled {
+            background-color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>John's D&D5e Death Save Tracker</h1>
+
+    <form id="tracker-form">
+        <label for="name-input">Name:</label>
+        <input type="text" id="name-input" required>
+        <label for="color-input">Color:</label>
+        <input type="color" id="color-input" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <table id="tracker-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Successes</th>
+                <th>Failures</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        document.getElementById("tracker-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            // Get name and color from inputs
+            var nameInput = document.getElementById("name-input");
+            var name = nameInput.value;
+            var colorInput = document.getElementById("color-input");
+            var color = colorInput.value;
+
+            // Create new table row
+            var table = document.getElementById("tracker-table").getElementsByTagName("tbody")[0];
+            var newRow = table.insertRow();
+
+            // Create cells for name, successes, and failures
+            var nameCell = newRow.insertCell();
+            nameCell.style.color = color;
+            nameCell.textContent = name;
+
+            var successesCell = newRow.insertCell();
+            var failuresCell = newRow.insertCell();
+
+            // Add success and failure circles to respective cells
+            for (var i = 0; i < 3; i++) {
+                var successCircle = document.createElement("div");
+                successCircle.classList.add("success-circle");
+                successCircle.addEventListener("click", toggleCircle);
+                successesCell.appendChild(successCircle);
+
+                var failureCircle = document.createElement("div");
+                failureCircle.classList.add("failure-circle");
+                failureCircle.addEventListener("click", toggleCircle);
+                failuresCell.appendChild(failureCircle);
+            }
+
+            // Reset form inputs
+            nameInput.value = "";
+            colorInput.value = "#000000";
+        });
+
+        function toggleCircle() {
+            if (this.classList.contains("filled")) {
+                this.classList.remove("filled");
+            } else {
+                this.classList.add("filled");
+            }
+
+            var successCircles = this.parentElement.getElementsByClassName("success-circle");
+            var failureCircles = this.parentElement.getElementsByClassName("failure-circle");
+
+            var successCount = 0;
+            var failureCount = 0;
+
+            for (var i = 0; i < successCircles.length; i++) {
+                if (successCircles[i].classList.contains("filled")) {
+                    successCount++;
+                }
+            }
+
+            for (var i = 0; i < failureCircles.length; i++) {
+                if (failureCircles[i].classList.contains("filled")) {
+                    failureCount++;
+                }
+            }
+
+            if (successCount === 3) {
+                removeTableRow(this.parentElement.parentElement);
+            } else if (failureCount === 3) {
+                removeTableRow(this.parentElement.parentElement);
+            }
+        }
+
+        function removeTableRow(row) {
+            var table = document.getElementById("tracker-table").getElementsByTagName("tbody")[0];
+            table.removeChild(row);
+        }
+    </script>
+</body>
+</html>
