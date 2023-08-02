@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D&D5e Ability Tracker</title>
+<title>D&D 5E Ability Tracker</title>
 <style>
   body {
     font-family: Arial, sans-serif;
@@ -37,20 +37,24 @@
   }
   .reset-button {
     cursor: pointer;
-    font-size: 16px;
+    font-size: 18px;
     margin-left: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 3px 5px;
   }
 </style>
 </head>
 <body>
-  <h1>John's D&D5e Ability Tracker</h1>
+  <h1>D&D 5E Ability Tracker</h1>
   
   <div>
     <label for="ability">Ability Name:</label>
     <input type="text" id="ability" placeholder="Enter ability name">
     
     <label for="uses">Uses:</label>
-    <input type="number" id="uses" placeholder="Enter number of uses">
+    <input type="number" id="uses" placeholder="Uses" style="width: 40px;">
     
     <label for="color">Fill Color:</label>
     <input type="color" id="color">
@@ -66,12 +70,13 @@
     function addAbility() {
       const abilityName = document.getElementById("ability").value;
       const uses = parseInt(document.getElementById("uses").value);
-      const color = document.getElementById("color").value;
       
       if (!abilityName || isNaN(uses) || uses <= 0) {
         alert("Please enter valid ability name and uses.");
         return;
       }
+      
+      const color = document.getElementById("color").value;
       
       const abilityList = document.getElementById("abilityList");
       
@@ -112,7 +117,7 @@
     
     function toggleCircle() {
       this.classList.toggle("filled");
-      const color = document.getElementById("color").value;
+      const color = this.style.borderColor;
       if (this.classList.contains("filled")) {
         this.style.backgroundColor = color;
       } else {
