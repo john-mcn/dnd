@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D&D5e Ability Tracker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+  }
+  .ability-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  .ability-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+  }
+  .ability-name {
+    margin-right: 10px;
+  }
+  .circle-container {
+    display: flex;
+    align-items: center;
+  }
+  .circle {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid #000;
+    cursor: pointer;
+    margin-right: 5px;
+  }
+  .filled {
+    background-color: #000;
+  }
+  .reset-button {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: 10px;
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 3px 5px;
+  }
+</style>
+</head>
+<body>
+  <h1>Ability Tracker</h1>
+  
+  <div>
+    <label for="ability">Ability Name:</label>
+    <input type="text" id="ability" placeholder="Enter ability name">
+    <br>
+    <label for="uses">Uses:</label>
+    <input type="number" id="uses" style="width: 40px;">
+    <label for="color">Fill Color:</label>
+    <input type="color" id="color">
+    <button onclick="addAbility()">Add</button>
+  </div>
+  
+  <ul class="ability-list" id="abilityList">
+    <!-- Abilities will be added here dynamically -->
+  </ul>
+  
+  <script>
+    function addAbility() {
+      const abilityName = document.getElementById("ability").value;
+      const uses = parseInt(document.getElementById("uses").value);
+      
+      if (!abilityName || isNaN(uses) || uses <= 0) {
+        alert("Please enter valid ability name and uses.");
+        return;
+      }
+      
+      const color = document.getElementById("color").value;
+      
+      const abilityList = document.getElementById("abilityList");
+      
+      const abilityItem = document.createElement("li");
+      abilityItem.className = "ability-item";
+      
+      const abilityNameElem = document.createElement("div");
+      abilityNameElem.className = "ability-name";
+      abilityNameElem.textContent = abilityName;
+      
+      const circleContainer = document.createElement("div");
+      circleContainer.className = "circle-container";
+      
+      for (let i = 0; i < uses; i++) {
+        const circle = document.createElement("div");
+        circle.className = "circle";
+        circle.style.borderColor = color;
+        circle.onclick = toggleCircle;
+        
+        circleContainer.appendChild(circle);
+      }
+      
+      const resetButton = document.createElement("span");
+      resetButton.className = "reset-button";
+      resetButton.innerHTML = "&#8635;"; // Loop symbol
+      resetButton.onclick = resetCircles;
+      
+      abilityItem.appendChild(abilityNameElem);
+      abilityItem.appendChild(circleContainer);
+      abilityItem.appendChild(resetButton);
+      
+      abilityList.appendChild(abilityItem);
+      
+      // Clear input fields
+      document.getElementById("ability").value = "";
+      document.getElementById("uses").value = "";
+    }
+    
+    function toggleCircle() {
+      this.classList.toggle("filled");
+      const color = this.style.borderColor;
+      if (this.classList.contains("filled")) {
+        this.style.backgroundColor = color;
+      } else {
+        this.style.backgroundColor = "";
+      }
+    }
+    
+    function resetCircles() {
+      const circles = this.parentElement.querySelector(".circle-container").querySelectorAll(".circle");
+      circles.forEach(circle => {
+        circle.classList.remove("filled");
+        circle.style.backgroundColor = "";
+      });
+    }
+  </script>
+</body>
+</html>
